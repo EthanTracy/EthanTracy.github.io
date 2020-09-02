@@ -10,8 +10,11 @@ var score
 var game_over = false
 var game_over_counter
 
+var cnv
+
 function setup() {
-    createCanvas(600, 600)
+    cnv = createCanvas(500, 600)
+    center_canvas()
     frameRate(4)
     
     food = [5, 3]
@@ -41,8 +44,9 @@ function draw() {
         line(500, 0, 500, 500)
 
         fill(0)
-        textSize(25)
-        text("Score: " + score, 505, 250)
+        textSize(22)
+        textAlign(CENTER, TOP)
+        text("Score: " + score, 250, 535)
         
         draw_food()
         draw_head(input)
@@ -69,6 +73,16 @@ function keyPressed() {
     } else if (keyCode == 65) {
         input = 'l'
     }
+}
+
+function windowResized() {
+    center_canvas()
+}
+
+function center_canvas() {
+    var x = (windowWidth - width) / 2;
+    var y = (windowHeight - height) / 2;
+    cnv.position(x, y);
 }
 
 function update_position() {
