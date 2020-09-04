@@ -29,14 +29,18 @@ async function showExamples(data) {
     }
 }
 
-async function run() {
+async function downloadData() {
     const data = new MnistData();
     await data.load();
+    await showExamples(data);
+    return data;
+}
+
+let trained_model;
+async function trainModel(data) {
     const model = getModel();
     tfvis.show.modelSummary({ name: 'Model Architecture' }, model);
-
-    await train(model, data);
-    await showExamples(data);
+    trained_model = await train(model, data);
 }
 
 function getModel() {
@@ -136,4 +140,33 @@ async function train(model, data) {
     });
 }
 
-document.addEventListener('DOMContentLoaded', run);
+const s = ( sketch ) => {
+    sketch.setup = () => {
+        let cnv = sketch.createCanvas(256, 256);
+        sketch.frameRate(30);
+        sketch.background(51);
+        sketch.color(255)
+    }
+    
+    sketch.draw = () => {
+        
+    }
+
+    sketch.mousePressed = () => {
+        sketch.ellipse(sketch.mouseX, sketch.mouseY, 10, 10)
+    }
+}
+
+let downloaded_data;
+document.getElementById("download").onclick = async function () {
+    document.getElementById("download").className = "p-5 m-5 btn btn-primary disabled";
+    downloaded_data = await downloadData();
+    document.getElementById("train").className = "p-5 m-5 btn btn-primary";
+    let myp5 = new p5(s);
+    }
+
+document.getElementById("train").onclick = async function() {
+    document.getElementById("train").className = "p-5 m-5 btn btn-primary disabled";
+    await trainModel(downloaded_data);
+    }
+//document.addEventListener('DOMContentLoaded', run);
